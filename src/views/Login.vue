@@ -72,6 +72,7 @@ export default {
       try {
         const res = await login(form)
         localStorage.setItem('token', res.data.token)
+        localStorage.setItem('userInfo', JSON.stringify(res.data))
         ElMessage.success('登录成功')
         router.push('/')
       } catch (error) {

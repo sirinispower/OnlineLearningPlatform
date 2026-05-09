@@ -16,7 +16,7 @@
       <div class="nav-user">
         <template v-if="isLoggedIn">
           <span class="username">{{ userInfo.nickname || userInfo.username }}</span>
-          <el-button type="text" @click="logout">退出</el-button>
+          <el-button link @click="logout">退出</el-button>
         </template>
         <template v-else>
           <router-link to="/login">登录</router-link>
@@ -37,9 +37,12 @@ export default {
   name: 'App',
   setup() {
     const router = useRouter()
-    const userInfo = ref({})
+    const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || '{}'))
     const isLoggedIn = computed(() => !!localStorage.getItem('token'))
-    const isAdmin = computed(() => userInfo.value.role === 'admin')
+    const isAdmin = computed(() => {
+      console.log('User role:', userInfo.value.role)
+      return userInfo.value.role === 'admin'
+    })
 
     const loadUserInfo = async () => {
       if (isLoggedIn.value) {
@@ -54,6 +57,7 @@ export default {
 
     const logout = () => {
       localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
       userInfo.value = {}
       router.push('/login')
     }
