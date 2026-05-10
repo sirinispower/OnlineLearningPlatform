@@ -29,40 +29,56 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { getCurrentUser } from './api/auth'
 
 export default {
   name: 'App',
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || '{}'))
-    const isLoggedIn = computed(() => !!localStorage.getItem('token'))
-    const isAdmin = computed(() => {
-      console.log('User role:', userInfo.value.role)
-      return userInfo.value.role === 'admin'
-    })
+    const loginState = ref(!!localStorage.getItem('token'))
+    const isLoggedIn = computed(() => loginState.value)
+    const isAdmin = computed(() => userInfo.value.role === 'admin')
+
+    const updateLoginState = () => {
+      const token = localStorage.getItem('token')
+      const storedUserInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+      loginState.value = !!token
+      userInfo.value = storedUserInfo
+    }
 
     const loadUserInfo = async () => {
-      if (isLoggedIn.value) {
+      if (loginState.value) {
         try {
           const res = await getCurrentUser()
           userInfo.value = res.data
+          localStorage.setItem('userInfo', JSON.stringify(res.data))
         } catch (error) {
           console.error('获取用户信息失败', error)
         }
+      } else {
+        userInfo.value = {}
       }
     }
 
     const logout = () => {
       localStorage.removeItem('token')
       localStorage.removeItem('userInfo')
+      loginState.value = false
       userInfo.value = {}
       router.push('/login')
     }
 
+    // 监听路由变化，自动刷新登录状态
+    watch(() => route.path, () => {
+      updateLoginState()
+    })
+
     onMounted(() => {
+      updateLoginState()
       loadUserInfo()
     })
 

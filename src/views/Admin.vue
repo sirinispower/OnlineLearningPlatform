@@ -123,6 +123,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getAllCourses, createCourse, updateCourse, deleteCourse } from '../api/course'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/category'
+import { getUsers, updateUser } from '../api/user'
 
 export default {
   name: 'Admin',
@@ -154,10 +155,20 @@ export default {
       }
     }
 
+    const loadUsers = async () => {
+      try {
+        const res = await getUsers()
+        users.value = res.data
+      } catch (error) {
+        console.error('获取用户失败', error)
+      }
+    }
+
     const handleMenuSelect = (index) => {
       activeMenu.value = index
       if (index === 'courses') loadCourses()
       if (index === 'categories') loadCategories()
+      if (index === 'users') loadUsers()
     }
 
     const editCourse = (course) => {
@@ -229,6 +240,7 @@ export default {
     onMounted(() => {
       loadCourses()
       loadCategories()
+      loadUsers()
     })
 
     return {
