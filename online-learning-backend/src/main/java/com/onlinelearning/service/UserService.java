@@ -13,9 +13,11 @@ public interface UserService {
 
     User getById(Long id);
 
-    Page<User> getUserPage(Integer page, Integer size);
+    Page<User> getUserPage(Integer page, Integer size, String keyword, String role);
 
     List<User> getAllUsers();
+
+    void createUser(User user);
 
     void updateUser(User user);
 

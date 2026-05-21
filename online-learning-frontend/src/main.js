@@ -11,6 +11,27 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+// 屏蔽 ResizeObserver 警告
+const debounce = (fn) => {
+  let frame
+  return (...params) => {
+    if (frame) {
+      cancelAnimationFrame(frame)
+    }
+    frame = requestAnimationFrame(() => {
+      fn(...params)
+    })
+  }
+}
+
+const resizeObserverErrorHandler = debounce((e) => {
+  if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+    e.stopImmediatePropagation()
+  }
+})
+
+window.addEventListener('error', resizeObserverErrorHandler)
+
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')

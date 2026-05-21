@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getVideoById, getVideosByCourseId } from '../api/video'
 import { getChaptersByCourseId } from '../api/chapter'
@@ -65,8 +65,8 @@ export default {
 
     const videoId = computed(() => route.params.id)
     const videoUrl = computed(() => {
-      if (!video.value) return ''
-      return `/uploads/videos/${video.value.url?.split('/').pop() || ''}`
+      if (!video.value?.url) return ''
+      return video.value.url.startsWith('http') ? video.value.url : video.value.url
     })
 
     const loadVideo = async () => {
@@ -168,6 +168,12 @@ export default {
 
     onMounted(() => {
       loadVideo()
+    })
+
+    watch(() => route.params.id, (newId, oldId) => {
+      if (newId && newId !== oldId) {
+        loadVideo()
+      }
     })
 
     return {

@@ -186,8 +186,6 @@ cd online-learning-frontend
 npm run build
 
 ```
-npm run serve
-```
 构建后的静态文件位于 `dist/` 目录，可部署到 Nginx 或其他 Web 服务器。
 
 ## 注意事项

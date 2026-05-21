@@ -19,8 +19,10 @@ public class UserController {
     @GetMapping
     public Result<Page<User>> list(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.success(userService.getUserPage(page, size));
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String role) {
+        return Result.success(userService.getUserPage(page, size, keyword, role));
     }
 
     @GetMapping("/all")
@@ -35,6 +37,12 @@ public class UserController {
             user.setPassword(null);
         }
         return Result.success(user);
+    }
+
+    @PostMapping
+    public Result<?> create(@RequestBody User user) {
+        userService.createUser(user);
+        return Result.success();
     }
 
     @PutMapping("/{id}")

@@ -1,17 +1,31 @@
 import request from '../utils/request'
 
 export const getChaptersByCourseId = (courseId) => {
-  return request.get(`/api/chapters/course/${courseId}`)
+  return request({
+    url: `/api/chapters/course/${courseId}`,
+    method: 'get'
+  })
 }
 
 export const createChapter = (data) => {
-  return request.post('/api/chapters', data)
+  return request({
+    url: '/api/chapters',
+    method: 'post',
+    data
+  })
 }
 
 export const updateChapter = (id, data) => {
-  return request.put(`/api/chapters/${id}`, data)
+  return request({
+    url: `/api/chapters/${id}`,
+    method: 'put',
+    data
+  })
 }
 
 export const deleteChapter = (id) => {
-  return request.delete(`/api/chapters/${id}`)
+  return request({
+    url: `/api/chapters/${id}`,
+    method: 'delete'
+  })
 }

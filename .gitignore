@@ -35,3 +35,6 @@ GeneratePassword.class
 
 # Office
 *.docx
+
+# Uploaded files (videos, covers, etc.)
+uploads/
