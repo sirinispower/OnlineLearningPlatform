@@ -52,7 +52,6 @@
                   >
                     <el-icon><VideoPlay /></el-icon>
                     <span class="video-title">{{ video.title }}</span>
-                    <span class="video-duration">{{ video.duration }}</span>
                   </div>
                 </div>
               </div>
@@ -388,11 +387,6 @@ export default {
   flex: 1;
   color: #606266;
   font-size: 14px;
-}
-
-.video-duration {
-  color: #909399;
-  font-size: 12px;
 }
 
 .comments-section {

@@ -31,7 +31,6 @@
           <el-table :data="courses" style="width: 100%">
             <el-table-column prop="title" label="课程名称" />
             <el-table-column prop="categoryName" label="分类" />
-            <el-table-column prop="instructorName" label="讲师" />
             <el-table-column prop="viewCount" label="观看次数" />
             <el-table-column label="操作" width="400">
               <template #default="scope">
@@ -270,8 +269,11 @@
         <el-table :data="videos" style="width: 100%">
           <el-table-column type="index" label="集数" width="80" />
           <el-table-column prop="title" label="视频标题" />
-          <el-table-column prop="chapterTitle" label="所属章节" width="150" />
-          <el-table-column prop="duration" label="时长" width="100" />
+          <el-table-column label="所属章节" width="180">
+            <template #default="scope">
+              {{ getChapterTitle(scope.row.chapterId) }}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="200">
             <template #default="scope">
               <el-button type="primary" size="small" @click="editVideo(scope.row)">编辑</el-button>
@@ -315,9 +317,6 @@
           <div v-if="videoForm.url" class="video-url">
             已上传: {{ videoForm.url }}
           </div>
-        </el-form-item>
-        <el-form-item label="视频时长">
-          <el-input v-model="videoForm.duration" placeholder="如: 15:30" />
         </el-form-item>
         <el-form-item label="排序">
           <el-input-number v-model="videoForm.sort" :min="0" />
@@ -385,7 +384,6 @@ export default {
     const videoForm = ref({
       title: '',
       url: '',
-      duration: '',
       sort: 0,
       courseId: null,
       chapterId: null
@@ -446,6 +444,12 @@ export default {
         console.error('获取视频失败', error)
         videos.value = []
       }
+    }
+
+    const getChapterTitle = (chapterId) => {
+      if (!chapterId) return '未分配'
+      const chapter = chapters.value.find(ch => Number(ch.id) === Number(chapterId))
+      return chapter?.title || '未分配'
     }
 
     const handleMenuSelect = (index) => {
@@ -572,10 +576,10 @@ export default {
     }
 
     // 视频管理
-    const manageVideos = (course) => {
+    const manageVideos = async (course) => {
       currentCourse.value = course
-      loadChapters(course.id)
-      loadVideos(course.id)
+      await loadChapters(course.id)
+      await loadVideos(course.id)
       showVideoDialog.value = true
     }
 
@@ -583,7 +587,6 @@ export default {
       videoForm.value = {
         title: '',
         url: '',
-        duration: '',
         sort: videos.value.length,
         courseId: currentCourse.value.id,
         chapterId: chapters.value.length > 0 ? chapters.value[0].id : null
@@ -811,6 +814,7 @@ export default {
       showAddVideoDialog,
       editVideo,
       saveVideo,
+      getChapterTitle,
       deleteVideo: deleteVideoHandler,
       handleVideoUploadSuccess,
       beforeVideoUpload,

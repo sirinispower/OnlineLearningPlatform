@@ -14,7 +14,6 @@ public class Video {
     private Long courseId;
     private String title;
     private String url;
-    private String duration;
     private Integer sort;
 
     @TableField(fill = FieldFill.INSERT)
