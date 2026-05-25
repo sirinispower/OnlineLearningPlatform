@@ -5,9 +5,9 @@ spring:
   application:
     name: online-learning-platform
   datasource:
-    url: jdbc:mysql://localhost:3306/online_learning?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://localhost:3306/online_learning?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: yhb13290978532
+    password: 5267959aaa
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -42,9 +42,8 @@ jwt:
 
 file:
   upload:
-    path: D:/yhb/OnlineLearningPlatform/uploads/
-    video-path: D:/yhb/OnlineLearningPlatform/uploads/videos/
-    cover-path: D:/yhb/OnlineLearningPlatform/uploads/covers/
+    # 留空则默认保存到项目根目录 uploads/ 下；也可指定绝对路径
+    base-dir:
 
 logging:
   level:

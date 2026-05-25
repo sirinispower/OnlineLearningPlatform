@@ -63,7 +63,6 @@ CREATE TABLE IF NOT EXISTS videos (
     course_id BIGINT NOT NULL,
     title VARCHAR(100) NOT NULL,
     url VARCHAR(255) NOT NULL,
-    duration VARCHAR(20),
     sort INT DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -84,22 +83,6 @@ CREATE TABLE IF NOT EXISTS comments (
     deleted INT DEFAULT 0,
     FOREIGN KEY (course_id) REFERENCES courses(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS learning_progress (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    course_id BIGINT NOT NULL,
-    video_id BIGINT NOT NULL,
-    progress INT DEFAULT 0,
-    duration INT DEFAULT 0,
-    completed BOOLEAN DEFAULT FALSE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted INT DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (course_id) REFERENCES courses(id),
-    FOREIGN KEY (video_id) REFERENCES videos(id)
 );
 
 CREATE TABLE IF NOT EXISTS favorites (

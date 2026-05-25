@@ -1,19 +1,17 @@
 package com.onlinelearning.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.onlinelearning.config.FileStorageConfig;
 import com.onlinelearning.entity.Course;
 import com.onlinelearning.mapper.CourseMapper;
 import com.onlinelearning.service.CourseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,9 +20,7 @@ import java.util.UUID;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseMapper courseMapper;
-
-    @Value("${file.upload.cover-path}")
-    private String coverUploadPath;
+    private final FileStorageConfig fileStorageConfig;
 
     @Override
     public Page<Course> getCoursePage(Integer page, Integer size, String keyword, Long categoryId) {
@@ -74,11 +70,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public String uploadCover(MultipartFile file) {
         try {
-            Path uploadDir = Paths.get(coverUploadPath);
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
-
+            Path uploadDir = fileStorageConfig.getCoverDir();
             String originalFilename = file.getOriginalFilename();
             String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf("."))
                     : ".jpg";

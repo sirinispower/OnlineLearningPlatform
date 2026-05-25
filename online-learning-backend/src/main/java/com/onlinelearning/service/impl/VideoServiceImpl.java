@@ -1,18 +1,16 @@
 package com.onlinelearning.service.impl;
 
+import com.onlinelearning.config.FileStorageConfig;
 import com.onlinelearning.entity.Video;
 import com.onlinelearning.mapper.VideoMapper;
 import com.onlinelearning.service.VideoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,9 +19,7 @@ import java.util.UUID;
 public class VideoServiceImpl implements VideoService {
 
     private final VideoMapper videoMapper;
-
-    @Value("${file.upload.video-path}")
-    private String videoUploadPath;
+    private final FileStorageConfig fileStorageConfig;
 
     @Override
     public List<Video> getVideosByChapterId(Long chapterId) {
@@ -58,11 +54,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public String uploadVideo(MultipartFile file) {
         try {
-            Path uploadDir = Paths.get(videoUploadPath);
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
-
+            Path uploadDir = fileStorageConfig.getVideoDir();
             String originalFilename = file.getOriginalFilename();
             String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf("."))
                     : ".mp4";

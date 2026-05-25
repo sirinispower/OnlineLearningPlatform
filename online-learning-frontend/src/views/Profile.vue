@@ -12,10 +12,6 @@
           class="profile-menu"
           @select="handleMenuSelect"
         >
-          <el-menu-item index="learning">
-            <el-icon><Reading /></el-icon>
-            <span>学习记录</span>
-          </el-menu-item>
           <el-menu-item index="favorites">
             <el-icon><Star /></el-icon>
             <span>我的收藏</span>
@@ -27,26 +23,6 @@
         </el-menu>
       </div>
       <div class="profile-content">
-        <div v-if="activeMenu === 'learning'" class="learning-record">
-          <h2>学习记录</h2>
-          <el-empty v-if="!learningRecords.length" description="暂无学习记录" />
-          <div v-else class="record-list">
-            <div 
-              v-for="record in learningRecords" 
-              :key="record.id"
-              class="record-item"
-            >
-              <div class="record-info">
-                <h4>{{ record.courseTitle }}</h4>
-                <p>{{ record.videoTitle }}</p>
-                <el-progress :percentage="record.progressPercent" />
-              </div>
-              <el-button type="primary" @click="continueLearning(record.videoId)">
-                继续学习
-              </el-button>
-            </div>
-          </div>
-        </div>
         <div v-if="activeMenu === 'favorites'" class="favorites">
           <h2>我的收藏</h2>
           <el-empty v-if="!favorites.length" description="暂无收藏课程" />
@@ -95,10 +71,9 @@ export default {
   name: 'Profile',
   setup() {
     const router = useRouter()
-    const activeMenu = ref('learning')
+    const activeMenu = ref('favorites')
     const user = ref({})
     const favorites = ref([])
-    const learningRecords = ref([])
     const userForm = ref({})
 
     const loadUserInfo = async () => {
@@ -131,27 +106,22 @@ export default {
       router.push(`/course/${courseId}`)
     }
 
-    const continueLearning = (videoId) => {
-      router.push(`/video/${videoId}`)
-    }
-
     const updateProfile = async () => {
       ElMessage.success('修改成功')
     }
 
     onMounted(() => {
       loadUserInfo()
+      loadFavorites()
     })
 
     return {
       activeMenu,
       user,
       favorites,
-      learningRecords,
       userForm,
       handleMenuSelect,
       goToCourse,
-      continueLearning,
       updateProfile
     }
   }
@@ -213,36 +183,6 @@ export default {
 .profile-content h2 {
   margin-bottom: 20px;
   color: #303133;
-}
-
-.record-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.record-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
-}
-
-.record-info {
-  flex: 1;
-}
-
-.record-info h4 {
-  margin-bottom: 4px;
-  color: #303133;
-}
-
-.record-info p {
-  color: #606266;
-  font-size: 13px;
-  margin-bottom: 8px;
 }
 
 .favorite-grid {

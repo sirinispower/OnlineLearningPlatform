@@ -17,17 +17,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user;
-        try {
-            Long userId = Long.valueOf(username);
-            user = userMapper.selectById(userId);
-        } catch (NumberFormatException e) {
-            user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                    .eq(User::getUsername, username));
-        }
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username));
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        return new UserDetailsImpl(user);
+    }
+
+    public UserDetails loadUserById(Long userId) throws UsernameNotFoundException {
+        User user = userMapper.selectById(userId);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + userId);
         }
 
         return new UserDetailsImpl(user);
