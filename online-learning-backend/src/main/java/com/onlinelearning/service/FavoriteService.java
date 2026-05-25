@@ -11,5 +11,7 @@ public interface FavoriteService {
 
     void removeFavorite(Long userId, Long courseId);
 
+    void removeByCourseId(Long courseId);
+
     boolean isFavorite(Long userId, Long courseId);
 }

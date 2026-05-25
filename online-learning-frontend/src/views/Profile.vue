@@ -33,8 +33,8 @@
               class="favorite-card"
               @click="goToCourse(item.courseId)"
             >
-              <img :src="item.course?.cover || '/default-cover.jpg'" :alt="item.course?.title">
-              <h4>{{ item.course?.title }}</h4>
+              <img :src="item.course?.cover || '/default-cover.jpg'" :alt="item.course?.title || '课程封面'">
+              <h4>{{ item.course?.title || '未知课程' }}</h4>
             </div>
           </div>
         </div>

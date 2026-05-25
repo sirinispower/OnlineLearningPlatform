@@ -11,26 +11,24 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-// 屏蔽 ResizeObserver 警告
-const debounce = (fn) => {
-  let frame
-  return (...params) => {
-    if (frame) {
-      cancelAnimationFrame(frame)
-    }
-    frame = requestAnimationFrame(() => {
-      fn(...params)
-    })
+// 屏蔽 ResizeObserver 无害报错（Element Plus 等组件常见）
+const suppressResizeObserverError = (event) => {
+  const message = event?.message || event?.reason?.message || ''
+  if (message.includes('ResizeObserver loop')) {
+    event.stopImmediatePropagation?.()
+    event.preventDefault?.()
+    return true
   }
+  return false
 }
 
-const resizeObserverErrorHandler = debounce((e) => {
-  if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
-    e.stopImmediatePropagation()
-  }
+window.addEventListener('error', (event) => {
+  suppressResizeObserverError(event)
 })
 
-window.addEventListener('error', resizeObserverErrorHandler)
+window.addEventListener('unhandledrejection', (event) => {
+  suppressResizeObserverError(event)
+})
 
 app.use(router)
 app.use(ElementPlus)

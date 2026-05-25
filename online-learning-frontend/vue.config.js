@@ -4,6 +4,11 @@ module.exports = defineConfig({
   lintOnSave: false,
   devServer: {
     port: 3000,
+    client: {
+      overlay: {
+        runtimeErrors: (error) => !String(error?.message || '').includes('ResizeObserver loop')
+      }
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
