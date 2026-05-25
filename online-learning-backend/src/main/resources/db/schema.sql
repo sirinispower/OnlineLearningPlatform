@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
     phone VARCHAR(20),
     avatar VARCHAR(255),
     nickname VARCHAR(50),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS videos (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted INT DEFAULT 0,
-    FOREIGN KEY (chapter_id) REFERENCES chapters(id),
+    FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE SET NULL,
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
