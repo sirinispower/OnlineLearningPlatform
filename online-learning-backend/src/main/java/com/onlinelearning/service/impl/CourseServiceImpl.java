@@ -1,21 +1,30 @@
 package com.onlinelearning.service.impl;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.onlinelearning.entity.Course;
 import com.onlinelearning.mapper.CourseMapper;
 import com.onlinelearning.service.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
     private final CourseMapper courseMapper;
+
+    @Value("${file.upload.cover-path}")
+    private String coverUploadPath;
 
     @Override
     public Page<Course> getCoursePage(Integer page, Integer size, String keyword, Long categoryId) {
@@ -60,5 +69,26 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAllCourses() {
         return courseMapper.selectCourseList();
+    }
+
+    @Override
+    public String uploadCover(MultipartFile file) {
+        try {
+            Path uploadDir = Paths.get(coverUploadPath);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String filename = UUID.randomUUID().toString() + extension;
+            Path filePath = uploadDir.resolve(filename);
+            file.transferTo(filePath.toFile());
+
+            return "/uploads/covers/" + filename;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload cover", e);
+        }
     }
 }

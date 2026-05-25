@@ -79,7 +79,6 @@
             <el-select v-model="userSearchRole" placeholder="选择角色" style="width: 150px; margin-right: 10px;" clearable @clear="loadUserPage">
               <el-option label="普通用户" value="user" />
               <el-option label="管理员" value="admin" />
-              <el-option label="讲师" value="instructor" />
             </el-select>
             <el-button type="primary" @click="loadUserPage">搜索</el-button>
           </div>
@@ -89,8 +88,8 @@
             <el-table-column prop="email" label="邮箱" />
             <el-table-column prop="role" label="角色">
               <template #default="scope">
-                <el-tag :type="scope.row.role === 'admin' ? 'danger' : scope.row.role === 'instructor' ? 'warning' : 'info'">
-                  {{ scope.row.role === 'admin' ? '管理员' : scope.row.role === 'instructor' ? '讲师' : '普通用户' }}
+                <el-tag :type="scope.row.role === 'admin' ? 'danger' : 'info'">
+                  {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
                 </el-tag>
               </template>
             </el-table-column>
@@ -149,7 +148,6 @@
           <el-select v-model="userForm.role" placeholder="选择角色">
             <el-option label="普通用户" value="user" />
             <el-option label="管理员" value="admin" />
-            <el-option label="讲师" value="instructor" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
@@ -185,7 +183,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="封面">
-          <el-input v-model="courseForm.cover" placeholder="封面URL" />
+          <el-upload
+            class="cover-uploader"
+            action="/api/courses/upload-cover"
+            :headers="uploadHeaders"
+            :show-file-list="false"
+            :on-success="handleCoverUploadSuccess"
+            :before-upload="beforeCoverUpload"
+            accept="image/*"
+          >
+            <img v-if="courseForm.cover" :src="courseForm.cover" class="cover-preview" />
+            <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+          <div v-if="courseForm.cover" class="cover-url">{{ courseForm.cover }}</div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -638,6 +648,30 @@ export default {
       return true
     }
 
+    const handleCoverUploadSuccess = (res) => {
+      if (res.code === 200) {
+        courseForm.value.cover = res.data
+        ElMessage.success('封面上传成功')
+      } else {
+        ElMessage.error(res.message || '上传失败')
+      }
+    }
+
+    const beforeCoverUpload = (file) => {
+      const isImage = file.type.startsWith('image/')
+      const isLt5M = file.size / 1024 / 1024 < 5
+
+      if (!isImage) {
+        ElMessage.error('请上传图片文件!')
+        return false
+      }
+      if (!isLt5M) {
+        ElMessage.error('图片大小不能超过 5MB!')
+        return false
+      }
+      return true
+    }
+
     // 用户管理
     const userRules = {
       username: [
@@ -779,7 +813,9 @@ export default {
       saveVideo,
       deleteVideo: deleteVideoHandler,
       handleVideoUploadSuccess,
-      beforeVideoUpload
+      beforeVideoUpload,
+      handleCoverUploadSuccess,
+      beforeCoverUpload
     }
   }
 }
@@ -857,5 +893,41 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+}
+
+.cover-uploader {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 200px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-uploader:hover {
+  border-color: #409eff;
+}
+
+.cover-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+}
+
+.cover-preview {
+  width: 200px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-url {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #606266;
+  word-break: break-all;
 }
 </style>

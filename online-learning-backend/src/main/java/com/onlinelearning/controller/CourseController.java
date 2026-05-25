@@ -6,6 +6,7 @@ import com.onlinelearning.entity.Course;
 import com.onlinelearning.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,5 +53,10 @@ public class CourseController {
     public Result<?> delete(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return Result.success();
+    }
+
+    @PostMapping("/upload-cover")
+    public Result<String> uploadCover(@RequestParam("file") MultipartFile file) {
+        return Result.success(courseService.uploadCover(file));
     }
 }
