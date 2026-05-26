@@ -5,6 +5,7 @@ import com.onlinelearning.config.FileStorageConfig;
 import com.onlinelearning.entity.Course;
 import com.onlinelearning.mapper.CourseMapper;
 import com.onlinelearning.service.CourseService;
+import com.onlinelearning.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,6 +22,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseMapper courseMapper;
     private final FileStorageConfig fileStorageConfig;
+    private final FavoriteService favoriteService;
 
     @Override
     public Page<Course> getCoursePage(Integer page, Integer size, String keyword, Long categoryId) {
@@ -59,6 +61,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourse(Long id) {
+        favoriteService.removeByCourseId(id);
         courseMapper.deleteById(id);
     }
 
